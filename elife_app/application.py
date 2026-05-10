@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from typing import Optional
 
-## from nicegui import ui ## ## for later use, not needed for now, to avoid import errors in the meantime
+from nicegui import ui
 
 from .data_access.db import Database
-###from .data_access.dao import EntryDAO ## --- IGNORE --- this is not needed for now, to avoid import errors in the meantime
+from .data_access.dao import EntryDAO
 from .services.wellness_service import WellnessService
+from .ui.Login import create_login_page
+from .ui.Dashboard import create_dashboard_page
 
 
 class ElifeApplication:
@@ -21,6 +23,9 @@ class ElifeApplication:
         self.entry_dao = EntryDAO(engine)
         self.wellness_service = WellnessService()
 
+        create_login_page()
+        create_dashboard_page(self.entry_dao, self.wellness_service)
+
     def run(self, host: str = "0.0.0.0", port: int = 8080, reload: bool = False) -> None:
         """Run the NiceGUI application."""
-        ui.run(host=host, port=port, reload=reload)
+        ui.run(host=host, port=port, reload=reload, storage_secret="elife_secret")
