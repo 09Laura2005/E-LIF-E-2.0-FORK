@@ -1,7 +1,7 @@
 from datetime import date
-from data_access.db import create_db
-from data_access.dao import WellnessDAO
-from domain.models import User, DailyEntry
+from elife_app.data_access.db import create_db
+from elife_app.data_access.dao import WellnessDAO
+from elife_app.domain.models import User, DailyEntry
 from elife_app.services.wellness_service import WellnessService
 
 
