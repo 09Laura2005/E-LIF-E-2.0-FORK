@@ -1,34 +1,49 @@
 
+from __future__ import annotations
+
+from typing import List, Optional
+
+from sqlalchemy.engine import Engine
 from sqlmodel import Session, select
-from data_access.db import engine  ## explain why this is needed, and how it works, in the context of the DAO
-from domain.models import User, DailyEntry
 
-# Registering users and login of users
+from ..domain.models import DailyEntry, User
 
 
-class WellnessDAO:
+class BaseDAO:
+    def __init__(self, engine: Engine) -> None:
+        self.engine = engine
 
-    def register_user(self, user):
-        with Session(engine) as session:
-            session.add(user)
-            session.commit()
+    def session(self) -> Session:
+        return Session(self.engine)
 
-    def login_user(self, username, password):
-        with Session(engine) as session:
-            statement = select(User).where(
-                User.username == username,
-                User.password == password
-            )
-            return session.exec(statement).first()
 
-    def add_entry(self, entry):
-        with Session(engine) as session:
+class EntryDAO(BaseDAO):
+
+    def create(self, entry: DailyEntry) -> DailyEntry:
+        with self.session() as session:
             session.add(entry)
             session.commit()
+            session.refresh(entry)
+            return entry
 
-    def get_user_entries(self, user_id):
-        with Session(engine) as session:
-            statement = select(DailyEntry).where(
-                DailyEntry.user_id == user_id
-            )
-            return session.exec(statement).all()
+    def list_all(self) -> List[DailyEntry]:
+        with self.session() as session:
+            return list(session.exec(select(DailyEntry)).all())
+
+    def get_by_id(self, entry_id: int) -> Optional[DailyEntry]:
+        with self.session() as session:
+            return session.get(DailyEntry, entry_id)
+
+
+class UserDAO(BaseDAO):
+
+    def create(self, user: User) -> User:
+        with self.session() as session:
+            session.add(user)
+            session.commit()
+            session.refresh(user)
+            return user
+
+    def get_by_username(self, username: str) -> Optional[User]:
+        with self.session() as session:
+            return session.exec(select(User).where(User.username == username)).first()
