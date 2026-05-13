@@ -7,8 +7,9 @@ from nicegui import ui
 from .data_access.db import Database
 from .data_access.dao import EntryDAO, WellnessDAO
 from .services.wellness_service import WellnessService
-from .ui.Login import create_login_page
+from .ui.Login_Register import create_login_page
 from .ui.Dashboard import create_dashboard_page
+from .ui.Daily_Report import create_daily_report_page
 
 
 class ElifeApplication:
@@ -27,6 +28,7 @@ class ElifeApplication:
 
         create_login_page(self.wellness_dao)
         create_dashboard_page(self.entry_dao, self.wellness_service)
+        create_daily_report_page(self.database)
 
     def run(self, host: str = "0.0.0.0", port: int = 8080, reload: bool = False) -> None:
         """Run the NiceGUI application."""
