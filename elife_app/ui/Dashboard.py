@@ -7,9 +7,10 @@ from elife_app.services.wellness_service import WellnessService
 def create_dashboard_page(entry_dao, wellness_service: WellnessService) -> None:
     @ui.page('/dashboard')
     def dashboard_page() -> None:
+        user_id = app.storage.user.get('user_id')
         username = app.storage.user.get('username')
 
-        if not username:
+        if not user_id or not username:
             ui.navigate.to('/')
             return
 
@@ -45,6 +46,7 @@ def create_dashboard_page(entry_dao, wellness_service: WellnessService) -> None:
 
             def submit():
                 entry = DailyEntry(
+                    user_id=int(user_id),
                     date=date.today(),
                     sleep_quality=int(sleep.value),
                     stress=int(stress.value),
@@ -59,8 +61,10 @@ def create_dashboard_page(entry_dao, wellness_service: WellnessService) -> None:
                     period=int(period.value),
                 )
                 score, advice = wellness_service.calculate_score(entry)
+                entry.score = score
                 entry_dao.create(entry)
                 result_label.text = f'Your wellness score: {score}\n' + '\n'.join(advice)
 
             ui.button('Submit', on_click=submit)
+            ui.button('View daily report', on_click=lambda: ui.navigate.to('/daily-report'))
             ui.button('Logout', on_click=logout).classes('mt-4')

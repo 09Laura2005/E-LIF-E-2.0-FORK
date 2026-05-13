@@ -8,7 +8,7 @@ from pathlib import Path
 # Add workspace root to path so absolute imports work
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == ==
+# ============================================================================
 # IMPORTANT: How to Run These Tests
 # =========================================================================
 # DO NOT run this file directly with Python, otherwise it will fail.

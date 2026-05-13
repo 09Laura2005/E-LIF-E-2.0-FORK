@@ -20,7 +20,8 @@ def create_login_page(user_dao) -> None:
                     user = user_dao.login_user(username, password)
 
                     if user:
-                        app.storage.user['username'] = username
+                        app.storage.user['user_id'] = user.id
+                        app.storage.user['username'] = user.username
                         ui.navigate.to('/dashboard')
                     else:
                         ui.notify('Wrong username or password',
