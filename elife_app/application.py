@@ -11,7 +11,7 @@ from .data_access.dao import EntryDAO, WellnessDAO
 from .services.wellness_service import WellnessService
 from .ui.Login_Register import create_login_page
 from .ui.Dashboard import create_dashboard_page
-from .ui.Daily_Report import create_daily_report_page
+from .ui.Daily_Entry import create_daily_report_page
 
 
 class ElifeApplication:
