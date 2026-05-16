@@ -14,7 +14,7 @@ class BaseDAO:
         self.engine = engine
 
     def session(self) -> Session:
-        return Session(self.engine)
+        return Session(self.engine, expire_on_commit=False)
 
 
 class EntryDAO(BaseDAO):
@@ -29,6 +29,15 @@ class EntryDAO(BaseDAO):
     def list_all(self) -> List[DailyEntry]:
         with self.session() as session:
             return list(session.exec(select(DailyEntry)).all())
+
+    def list_for_user(self, user_id: int) -> List[DailyEntry]:
+        with self.session() as session:
+            statement = (
+                select(DailyEntry)
+                .where(DailyEntry.user_id == user_id)
+                .order_by(DailyEntry.date.desc())
+            )
+            return list(session.exec(statement).all())
 
     def get_by_id(self, entry_id: int) -> Optional[DailyEntry]:
         with self.session() as session:
@@ -81,8 +90,4 @@ class WellnessDAO:
         return self.entry_dao.create(entry)
 
     def get_user_entries(self, user_id: int) -> List[DailyEntry]:
-        with Session(self.engine) as session:
-            return list(
-                session.exec(select(DailyEntry).where(
-                    getattr(DailyEntry, "user_id") == user_id)).all()
-            )
+        return self.entry_dao.list_for_user(user_id)
