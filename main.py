@@ -1,11 +1,9 @@
-def main():
-    try:
-        from elife_app.application import ElifeApplication
+from elife_app.application import ElifeApplication
 
-        app = ElifeApplication()
-        app.run()
-    except KeyboardInterrupt:
-        print("\nE-LIF-E app stopped.")
+
+def main():
+    app = ElifeApplication()
+    app.run()
 
 
 if __name__ == "__main__":
