@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 # ============================================================================
 # IMPORTANT: How to Run These Tests
-# =========================================================================
+# ============================================================================
 # DO NOT run this file directly with Python, otherwise it will fail.
 # This file uses pytest fixtures that only work through the pytest runner.
 #
@@ -18,6 +18,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 #   pytest -v elife_app/tests/test_db.py
 #
 # ============================================================================
+
 
 # ==================== TEST 1: Query Seeded Daily Entries ====================
 
@@ -47,6 +48,7 @@ def test_query_seeded_daily_entries(seeded_db):
 
 
 # ==================== TEST 2: Create and Persist User ====================
+
 def test_create_and_persist_user(db):
     """
     Test that a new User can be created and persisted to the database.
@@ -82,6 +84,7 @@ def test_create_and_persist_user(db):
 
 
 # ==================== TEST 3: Save DailyEntry and Retrieve by Date ====================
+
 def test_save_daily_entry_and_retrieve_by_date(db):
     """
     Test that a new DailyEntry can be saved and retrieved by specific date.

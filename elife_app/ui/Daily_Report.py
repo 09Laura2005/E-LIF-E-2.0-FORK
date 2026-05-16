@@ -1,4 +1,10 @@
 from datetime import date
+from pathlib import Path
+import sys
+
+# make package imports work when this file is executed directly
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
 from nicegui import app, ui
 from sqlmodel import select
 
