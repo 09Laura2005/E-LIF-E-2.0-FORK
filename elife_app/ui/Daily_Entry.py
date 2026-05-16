@@ -1,3 +1,8 @@
+from elife_app.services.wellness_service import WellnessService
+from elife_app.domain.models import DailyEntry
+from elife_app.data_access.db import Database
+from sqlmodel import select
+from nicegui import app, ui
 from datetime import date
 from pathlib import Path
 import sys
@@ -5,17 +10,10 @@ import sys
 # make package imports work when this file is executed directly
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from nicegui import app, ui
-from sqlmodel import select
 
-from elife_app.data_access.db import Database
-from elife_app.domain.models import DailyEntry
-from elife_app.services.wellness_service import WellnessService
-
-
-def create_daily_report_page(database: Database | None = None) -> None:
-    @ui.page('/daily-report')
-    def daily_report_page() -> None:
+def create_daily_entry_page(database: Database | None = None) -> None:
+    @ui.page('/daily-entry')
+    def daily_entry_page() -> None:
         user_id = app.storage.user.get('user_id')
         username = app.storage.user.get('username')
 
@@ -28,8 +26,10 @@ def create_daily_report_page(database: Database | None = None) -> None:
         wellness = WellnessService()
 
         with ui.column().classes('w-full items-center gap-4 p-8'):
-            ui.label(f'Daily report for {username}').classes('text-2xl font-bold')
-            ui.button('Back to dashboard', on_click=lambda: ui.navigate.to('/dashboard'))
+            ui.label(f'Daily entry for {username}').classes(
+                'text-2xl font-bold')
+            ui.button('Back to dashboard',
+                      on_click=lambda: ui.navigate.to('/dashboard'))
 
             entries_container = ui.column().classes('w-full gap-2')
             avg_label = ui.label('')
@@ -57,6 +57,11 @@ def create_daily_report_page(database: Database | None = None) -> None:
                     avg_label.set_text('No data for this user yet.')
 
             def create_entry_row(entry: DailyEntry) -> None:
+                def format_stamp() -> str:
+                    if entry.created_at is None:
+                        return 'unknown'
+                    return entry.created_at.strftime('%Y-%m-%d %H:%M')
+
                 def open_edit() -> None:
                     with ui.dialog().classes('w-1/2') as dlg:
                         ui.label('Edit entry').classes('text-lg font-medium')
@@ -67,7 +72,8 @@ def create_daily_report_page(database: Database | None = None) -> None:
                         stress_input = ui.number(
                             label='Stress', value=entry.stress)
                         mood_input = ui.number(label='Mood', value=entry.mood)
-                        steps_input = ui.number(label='Steps', value=entry.steps)
+                        steps_input = ui.number(
+                            label='Steps', value=entry.steps)
                         work_input = ui.number(
                             label='Work hours', value=entry.work_hours)
 
@@ -82,7 +88,8 @@ def create_daily_report_page(database: Database | None = None) -> None:
                             with db.session_scope() as session:
                                 obj = session.get(DailyEntry, entry.id)
                                 if obj is None or obj.user_id != int(user_id):
-                                    ui.notify('Entry not found for this user', color='red')
+                                    ui.notify(
+                                        'Entry not found for this user', color='red')
                                     return
 
                                 obj.date = d
@@ -111,7 +118,8 @@ def create_daily_report_page(database: Database | None = None) -> None:
                     refresh()
 
                 with ui.row().classes('items-center justify-between w-full py-2 px-4 border rounded'):
-                    ui.label(f'{entry.date.isoformat()} — score: {entry.score}')
+                    ui.label(
+                        f'{entry.date.isoformat()} — score: {entry.score} — logged: {format_stamp()}')
                     with ui.row():
                         ui.button('Edit', on_click=open_edit)
                         ui.button('Delete', on_click=delete_entry)
@@ -170,4 +178,4 @@ def create_daily_report_page(database: Database | None = None) -> None:
             refresh()
 
 
-__all__ = ['create_daily_report_page']
+__all__ = ['create_daily_entry_page']

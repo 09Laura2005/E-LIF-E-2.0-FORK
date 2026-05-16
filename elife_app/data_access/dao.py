@@ -14,7 +14,7 @@ class BaseDAO:
         self.engine = engine
 
     def session(self) -> Session:
-        return Session(self.engine)
+        return Session(self.engine, expire_on_commit=False)
 
 
 class EntryDAO(BaseDAO):

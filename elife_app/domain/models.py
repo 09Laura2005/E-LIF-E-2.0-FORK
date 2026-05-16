@@ -1,5 +1,5 @@
 from typing import List, Optional
-from datetime import date
+from datetime import date, datetime
 from sqlmodel import SQLModel, Field, Relationship
 # Use Python 3.11.15 for sqlmodel otherwise an error will occur when running the app.
 
@@ -15,7 +15,9 @@ class User(SQLModel, table=True):
 
 class DailyEntry(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: Optional[int] = Field(default=None, foreign_key="user.id", index=True)
+    user_id: Optional[int] = Field(
+        default=None, foreign_key="user.id", index=True)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
     date: date
     sleep_quality: int = Field(ge=0, le=10)
     stress: int = Field(ge=0, le=10)
